@@ -1,8 +1,20 @@
-socket = io.connect('http://178.62.124.78:22580/'),
 game_on = false;
 
+var url = 'ws://178.62.124.78:22580/websocket/';
+var ws;
+
+function connect() {
+	ws = new WebSocket(url);
+	if(!ws) {
+		setTimeout(connect, 5000);
+	}
+}
+
+connect();
+
+
 user = {
-	authenticate: function(){
+	authenticate: function() {
 		var user_name = '',
 			i = 0;
 
@@ -12,8 +24,8 @@ user = {
 		}
 
 		if(user_name.length){
-			socket.emit('name', user_name);
-		}else{
+			ws.send(JSON.stringify({name: 'name', data: user_name}));
+		} else {
 			$('body').html('<h1>You are not allowed to play, bad guy!</h1>');
 		}
 	},
@@ -27,7 +39,7 @@ sign = {
 			return;
 		}
 
-		socket.emit('sign', $(which).attr('alt'));
+		ws.send(JSON.stringify({name: 'sign', data: $(which).attr('alt')}));
 
 		$('.sign').removeClass('active');
 		$(which).addClass('active');
@@ -36,7 +48,10 @@ sign = {
 
 $(document).ready(function(){
 
-user.authenticate();
+ws.onopen = function(event) {
+	user.authenticate();
+	ws.onmessage = handleMessage;
+};
 
 // ACTIONS
 	$('.sign').click(function(){
@@ -45,55 +60,61 @@ user.authenticate();
 // END ACTIONS
 
 // SOCKET
-	socket.on('id', function(id){
-		user.id = id;
-	});
+var handleMessage = function(event) {
+	var message = JSON.parse(event.data);
+	console.log('onMessage');
+	console.log('message.name', message.name);
+	console.log('message.data', message.data);
+	
+	switch(message.name) {
+		case 'id':
+			user.id = message.data;
+			break;
+		case 'init':
+			game_on = true;
+			$('#status').html('Play!');
+			$('#interval').html(message.data.interval);
+			setTimeout(start_counter, 1000);
+			$('#results').fadeOut('slow', function(){
+				$('#winners, #winners_showed, #players').empty();
+			});
+			break;
+		case 'end':
+			game_on = false;
+			$('#status').html('Wait');
+			$('.sign').removeClass('active');
+			break;
+		case 'online':
+			$('#online_number').html(message.data);
+			break;
+		case 'log':
+			console.log(message.data);
+			break;
+		case 'name':
+			user.name = message.data;
+			break;
+		case 'result':
+			var result = message.data;
+			$('#winners_holder').hide();
 
-	socket.on('init', function(i){
-		game_on = true;
-		$('#status').html('Play!');
-		$('#interval').html(i.interval);
-		setTimeout(start_counter, 1000);
-		$('#results').fadeOut('slow', function(){
-			$('#winners, #winners_showed, #players').empty();
-		});
-	});
+			if(result.winners.length){
+				$('#winners').html(pluck(result.winners, 'name').join(', '));
+				$('#winners_showed').html(result.data[result.winners[0].id].vote);
+				$('#winners_holder').show();
+			}
 
-	socket.on('end', function(e){
-		game_on = false;
-		$('#status').html('Wait');
-		$('.sign').removeClass('active');
-	});
+			var players = [];
+			for(var i in result.data){
+				players.push(result.data[i].name + ' (' + result.data[i].vote + ')<br />');
+			}
 
-	socket.on('online', function(n){
-		$('#online_number').html(n);
-	});
-
-	socket.on('log', function(data){
-		console.log(data);
-	});
-
-	socket.on('name', function(name){
-		user.name = name;
-	});
-
-	socket.on('result', function(data){
-		$('#winners_holder').hide();
-
-		if(data.winners.length){
-			$('#winners').html(pluck(data.winners, 'name').join(', '));
-			$('#winners_showed').html(data.data[data.winners[0].id].vote);
-			$('#winners_holder').show();
-		}
-
-		var players = [];
-		for(var i in data.data){
-			players.push(data.data[i].name + ' (' + data.data[i].vote + ')<br />');
-		}
-
-		$('#players').html(players);
-		$('#results').fadeIn('fast');
-	});
+			$('#players').html(players);
+			$('#results').fadeIn('fast');
+			break;
+		default:
+			break;
+	}
+}
 // END SOCKET
 
 	function start_counter(){
