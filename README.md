@@ -11,13 +11,13 @@ let ws = new WebSocket('ws://178.62.124.78:22580/websocket/')
 
 After connecting a client should send a message with its name.
 
-__Message__:
+_Message_:
 ```
 name: 'name'
 data: CLIENT_NAME
 ```
 
-__Example__:
+_Example_:
 ```javascript
 ws.onopen = function(event) {
     let message = JSON.stringify({
@@ -30,13 +30,13 @@ ws.onopen = function(event) {
 
 Then the client will receive a message with a unique client id.
 
-__Message__:
+_Message_:
 ```
 name: 'id'
 data: UNIQUE_CLIENT_ID
 ```
 
-__Example__:
+_Example_:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -49,14 +49,14 @@ function handleMessage(event) {
 
 As soon as there are at least two clients, each client will receive an 'init' message.
 
-__Message__:
+_Message_:
 ```
 name: 'init'
 data:
     interval: TIME_UNTIL_NEXT_GAME_IN_SECONDS
 ```
 
-__Example__:
+_Example_:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -69,12 +69,12 @@ function handleMessage(event) {
 
 When a game ends the client receives an 'end' message.
 
-__Message__:
+_Message_:
 ```
 name: 'end'
 ```
 
-__Example__:
+_Example_:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -87,13 +87,13 @@ function handleMessage(event) {
 
 The server will periodically broadcast an 'online' message that tells each client how many players there are currently in the game.
 
-__Message__:
+_Message_:
 ```
 name: 'online'
 data: NUMBER_OF_ONLINE_PLAYERS
 ```
 
-__Example__:
+_Example_:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -106,7 +106,7 @@ function handleMessage(event) {
 
 When a game ends a 'result' message will be broadcast to all clients. It contains a list of clients and the sign each client played in the last game; and a list of winners.
 
-__Message__:
+_Message_:
 ```
 name: 'result'
 data: 
@@ -118,7 +118,7 @@ data:
         vote: SIGN_PLAYED
 ```
 
-__Example__:
+_Example_:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -136,7 +136,7 @@ Not officially supported message types
 --------------------------------------
 Log message.
 
-__Message__:
+_Message_:
 ```
 name: 'log'
 data: DATA_TO_LOG
