@@ -67,6 +67,24 @@ function handleMessage(event) {
 }
 ```
 
+At this point the client sends its decision to the server.
+_Message_:
+```
+name: 'sign'
+data: ONE_OF('rock', 'paper', 'scissors')
+```
+
+_Example_:
+```javascript
+function sign() {
+    let message = JSON.stringify({
+        name: 'sign',
+        data: 'rock'
+    })
+    ws.send(message)
+}
+```
+
 When a game ends the client receives an 'end' message.
 
 _Message_:
