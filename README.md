@@ -1,18 +1,23 @@
 Rock Paper Scissors
+===================
 
 The game starts when 2 or more players are online. :-)
-connect:
+
+
+To connect
 ```javascript
 let ws = new WebSocket('ws://178.62.124.78:22580/websocket/')
 ```
 
-After connecting a client should send a message with its name:
-message:
+After connecting a client should send a message with its name.
+
+Message:
 ```
 name: 'name'
 data: CLIENT_NAME
 ```
-example:
+
+Example:
 ```javascript
 ws.onopen = function(event) {
     let message = JSON.stringify({
@@ -24,12 +29,14 @@ ws.onopen = function(event) {
 ```
 
 Then the client will receive a message with a unique client id.
-message:
+
+Message:
 ```
 name: 'id'
 data: UNIQUE_CLIENT_ID
 ```
-example:
+
+Example:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -40,14 +47,16 @@ function handleMessage(event) {
 }
 ```
 
-As soon as there are at least two clients, each client will receive an 'init' message
-message:
+As soon as there are at least two clients, each client will receive an 'init' message.
+
+Message:
 ```
 name: 'init'
 data:
     interval: TIME_UNTIL_NEXT_GAME_IN_SECONDS
 ```
-example:
+
+Example:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -58,12 +67,14 @@ function handleMessage(event) {
 }
 ```
 
-When a game ends the client receives an 'end' message
-message:
+When a game ends the client receives an 'end' message.
+
+Message:
 ```
 name: 'end'
 ```
-example:
+
+Example:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -74,13 +85,15 @@ function handleMessage(event) {
 }
 ```
 
-The server will periodically broadcast an 'online' message that tells each client how many players there are currently in the game
-message:
+The server will periodically broadcast an 'online' message that tells each client how many players there are currently in the game.
+
+Message:
 ```
 name: 'online'
 data: NUMBER_OF_ONLINE_PLAYERS
 ```
-example:
+
+Example:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -92,7 +105,8 @@ function handleMessage(event) {
 ```
 
 When a game ends a 'result' message will be broadcast to all clients. It contains a list of clients and the sign each client played in the last game; and a list of winners.
-message:
+
+Message:
 ```
 name: 'result'
 data: 
@@ -103,7 +117,8 @@ data:
         name: NAME_OF_PLAYER
         vote: SIGN_PLAYED
 ```
-example:
+
+Example:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
