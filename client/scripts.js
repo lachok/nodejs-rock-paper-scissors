@@ -62,9 +62,7 @@ ws.onopen = function(event) {
 // SOCKET
 var handleMessage = function(event) {
 	var message = JSON.parse(event.data);
-	console.log('onMessage');
-	console.log('message.name', message.name);
-	console.log('message.data', message.data);
+	console.log('onMessage : [', message.name, '] : ', message.data);
 	
 	switch(message.name) {
 		case 'id':
