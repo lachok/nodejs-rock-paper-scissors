@@ -1,4 +1,4 @@
-socket = io.connect('http://141.0.170.38:22580/'),
+socket = io.connect('http://nodejs-rock-paper-scissors.azurewebsites.net:22580/'),
 game_on = false;
 
 user = {
