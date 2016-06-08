@@ -2,7 +2,7 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
-var interval = 10 * 1000, waiting = 5 * 1000, heartbeat_interval = 60 * 1000, // times in ms
+var interval = 5 * 1000, waiting = 5 * 1000, heartbeat_interval = 60 * 1000, // times in ms
 	connections = [], names = {}, signs = {}, disallowed = [], port = 22580, game_on = false // additions
     connectionId = 1, score = {};
  
