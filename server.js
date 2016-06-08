@@ -64,7 +64,24 @@ wsServer.on('request', function(request) {
                     signs[connection.id] = messageJson.data;
                     break;
 				case 'score':
-					connection.send(JSON.stringify({name: 'score', data: score}));
+					var sortedScore = Object.keys(score).map(function(key) {
+						return {
+							id: key,
+							name: score[key].name,
+							points: score[key].points
+						};
+					});
+					sortedScore.sort(function compare(a, b) {
+						if (a.points < b.points) {
+							return -1;
+						}
+						if (a.points < b.points) {
+							return 1;
+						}
+						// a must be equal to b
+						return 0;
+					})
+					connection.send(JSON.stringify({name: 'score', data: sortedScore}));
 					break;
                 default:
                     break;
