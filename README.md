@@ -4,20 +4,20 @@ Rock Paper Scissors
 The game starts when 2 or more players are online. :-)
 
 
-To connect
+To connect to the game server:
 ```javascript
 let ws = new WebSocket('ws://178.62.124.78:22580/websocket/')
 ```
 
 After connecting a client should send a message with its name.
 
-Message:
+__Message__:
 ```
 name: 'name'
 data: CLIENT_NAME
 ```
 
-Example:
+__Example__:
 ```javascript
 ws.onopen = function(event) {
     let message = JSON.stringify({
@@ -30,13 +30,13 @@ ws.onopen = function(event) {
 
 Then the client will receive a message with a unique client id.
 
-Message:
+__Message__:
 ```
 name: 'id'
 data: UNIQUE_CLIENT_ID
 ```
 
-Example:
+__Example__:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -49,14 +49,14 @@ function handleMessage(event) {
 
 As soon as there are at least two clients, each client will receive an 'init' message.
 
-Message:
+__Message__:
 ```
 name: 'init'
 data:
     interval: TIME_UNTIL_NEXT_GAME_IN_SECONDS
 ```
 
-Example:
+__Example__:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -69,12 +69,12 @@ function handleMessage(event) {
 
 When a game ends the client receives an 'end' message.
 
-Message:
+__Message__:
 ```
 name: 'end'
 ```
 
-Example:
+__Example__:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -87,13 +87,13 @@ function handleMessage(event) {
 
 The server will periodically broadcast an 'online' message that tells each client how many players there are currently in the game.
 
-Message:
+__Message__:
 ```
 name: 'online'
 data: NUMBER_OF_ONLINE_PLAYERS
 ```
 
-Example:
+__Example__:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -106,7 +106,7 @@ function handleMessage(event) {
 
 When a game ends a 'result' message will be broadcast to all clients. It contains a list of clients and the sign each client played in the last game; and a list of winners.
 
-Message:
+__Message__:
 ```
 name: 'result'
 data: 
@@ -118,7 +118,7 @@ data:
         vote: SIGN_PLAYED
 ```
 
-Example:
+__Example__:
 ```javascript
 function handleMessage(event) {
 	var message = JSON.parse(event.data)
@@ -135,7 +135,8 @@ function handleMessage(event) {
 Not officially supported message types
 --------------------------------------
 Log message.
-message:
+
+__Message__:
 ```
 name: 'log'
 data: DATA_TO_LOG
