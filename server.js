@@ -4,7 +4,7 @@ var http = require('http');
 
 var interval = 10 * 1000, waiting = 5 * 1000, heartbeat_interval = 60 * 1000, // times in ms
 	connections = [], names = {}, signs = {}, disallowed = [], port = 22580, game_on = false // additions
-    connectionId = 1;
+    connectionId = 1, score = {};
  
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
@@ -63,6 +63,9 @@ wsServer.on('request', function(request) {
                     }
                     signs[connection.id] = messageJson.data;
                     break;
+				case 'score':
+					connection.send(JSON.stringify({name: 'score', data: score}));
+					break;
                 default:
                     break;
             }
@@ -133,7 +136,8 @@ function results(){
 	check_reset(result);
 	add_signs(result);
 //	console.log(result);
-
+	
+	update_score(result);
 	broadcast('result', result);
 }
 
@@ -206,6 +210,15 @@ function get_winners(state){
 
 	return winners;
 }
+
+function update_score(result) {
+	result.winners.forEach(function(winner) {
+		score[winner.id] = score[winner.id] || {};
+		score[winner.id].name = winner.name;
+		score[winner.id].points = score[winner.id].points || 0;
+		score[winner.id].points++;
+	})
+} 
 
 function heartbeat(){
 	broadcast('online', connections.length);
